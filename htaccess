@@ -1,0 +1,4 @@
+RewriteCond %{SERVER_PORT} 80      
+RewriteCond %{HTTP_HOST} ^fortehousecapital.com\.com$ [OR] 
+RewriteCond %{HTTP_HOST} ^www\.fortehousecapital.com\.com$
+ RewriteRule ^(.*)$ https://www.fortehousecapital.com/$1 [R,L]
