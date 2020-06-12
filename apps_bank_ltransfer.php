@@ -16,6 +16,7 @@ session_start();
     $data = htmlspecialchars($data);
     return $data;
   }
+  $res = '';
  if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (
         isset($_POST['amount']) and  
@@ -28,7 +29,7 @@ session_start();
         isset($_POST['transfer_type']) and
         isset($_POST['short_code'])
         ) 
-        {
+         {
             $amount = $_POST['amount'];
             $bank_name = $_POST['bank_name'];
             $bank_address = $_POST['bank_address'];
@@ -36,25 +37,27 @@ session_start();
             $account_name = $_POST['account_name'];
             $account_number = $_POST['account_number'];
             $transfer_details = $_POST['transfer_details'];
-            $transfer_type = $_POST['transfer_type'];
             $short_code = $_POST['short_code'];
-
-            if (empty($amount) || 
+            if (empty($amount)) {
+              echo 0;
+            }
+            if (//empty($amount) || 
             empty($bank_name) || 
             empty($bank_address) || 
             empty($country) || 
             empty($account_name) || 
             empty($account_number) || 
             empty($transfer_details) || 
-            empty($transfer_type) || 
             empty($short_code)) 
             {
+              echo 1234;
             //user didn't send all that is required
                 http_response_code(401);
                 header("bad request: ensure all fiels are filled");
-            }else{
+             }else{
+              
             // user has successfully passed validation'
-                $user_id = $_SESSION['user_id'];
+                $email = $_SESSION['email'];
                 $amount = trim_input($amount);
                 $bank_name = trim_input($bank_name);
                 $bank_address = trim_input($bank_address);
@@ -62,18 +65,18 @@ session_start();
                 $account_name = trim_input($account_name); 
                 $account_number = trim_input($account_number);
                 $transfer_details = trim_input($transfer_details);
-                $transfer_type = trim_input($transfer_type); 
                 $transaction_id = generate_transaction_id($dbconnect);
                 
-                $sql = "INSERT INTO transactionhistory (userid,transaction_id,bankname,bankaddress,country,accountname,accountnumber,shortcode,amount,details,transfertype) 
-                        VALUES ('$user_id','$transaction_id','$bank_name','$bank_address','$country','$account_name','$account_number','$short_code','$amount','$transfer_details','$transfer_type')";                $result = mysqli_query($dbconnect,$sql);
+                $sql = "INSERT INTO transactionhistory (email,transaction_id,bankname,bankaddress,country,accountname,accountnumber,shortcode,amount,details,transfertype) 
+                        VALUES ('$email','$transaction_id','$bank_name','$bank_address','$country','$account_name','$account_number','$short_code','$amount','$transfer_details','debit')";                $result = mysqli_query($dbconnect,$sql);
                 if ($result) {
-                    echo json_encode(['msg'=>'successfully posted']);
+                                 
+                    $res = true;
                     
                 }else{
                     echo json_encode(['msg'=>'server error']);
                 }        
-            }
+             }
             
     }else{
         echo 'not set';
@@ -919,6 +922,12 @@ session_start();
                   <!--START - Money Withdraw Form-->
                   <div class="element-wrapper">
                     <div class="element-box">
+                    <?php if($res){ ?>
+                      <div class="alert alert-success text-white">
+                        Transaction has been posted successfully
+                      </div>
+                    <?php } ?> 
+
                       <form id="transfer-form" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
                         <h5 class="element-box-header">
                           Local Transfer

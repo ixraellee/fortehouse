@@ -51,8 +51,8 @@
             if(data.message == 'success'){
                 result.textContent = 'Two-Way Authentication Security Code has been verified, processing transfer ...';
                 setTimeout(()=>{
-                    document.getElementById('hidden_submit').click()
-                    //form.submit();
+                    document.getElementById('transfer-form').submit()
+
                 },1000)
             }else{
                 result.textContent = 'incorrect Two-Way Authentication Security Code';
