@@ -79,6 +79,42 @@ $fetch1 = mysqli_query($db,$query1);
   }
 }
 
+function pending_otp($db){
+  $query1 = "SELECT * from `users` WHERE `request_otp` = '1' ORDER BY `id` DESC";
+$fetch1 = mysqli_query($db,$query1);
+  $row = mysqli_num_rows($fetch1);
+  
+  if($row > 0){
+      while($fetchdata1 = mysqli_fetch_array($fetch1)){
+          $historyid = $fetchdata1['nickname'];
+          $date = $fetchdata1['email'];
+          $firstname= $fetchdata1['firstname'];
+          $lastname = $fetchdata1['lastname'];
+          $account_number = $fetchdata1['account_number'];
+          echo "
+          <tr>
+                        
+          <td>
+            <span>$firstname</span>
+          </td>
+          <td>
+            <span></span><span>$lastname</span>
+          </td>
+          <td class='cell-with-media'>
+            <img alt=''  style='height: 25px;'><span>$date</span>
+          </td>
+          <td class='text-center'>
+            $historyid
+          </td>
+          <td class='text-right bolder nowrap'>
+            <a class='btn btn-success' target='_blank' href='./generate_otp.php?id=$account_number'>View</span>
+          </td>
+        </tr>
+          ";
+      }
+  }
+}
+
 
 
 function showimg($uid,$db){

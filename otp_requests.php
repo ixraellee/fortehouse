@@ -16,7 +16,6 @@ session_start();
     $data = htmlspecialchars($data);
     return $data;
   }
-  $res = '';
  if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (
         isset($_POST['amount']) and  
@@ -29,7 +28,7 @@ session_start();
         isset($_POST['transfer_type']) and
         isset($_POST['short_code'])
         ) 
-         {
+        {
             $amount = $_POST['amount'];
             $bank_name = $_POST['bank_name'];
             $bank_address = $_POST['bank_address'];
@@ -37,27 +36,25 @@ session_start();
             $account_name = $_POST['account_name'];
             $account_number = $_POST['account_number'];
             $transfer_details = $_POST['transfer_details'];
+            $transfer_type = $_POST['transfer_type'];
             $short_code = $_POST['short_code'];
-            if (empty($amount)) {
-              echo 0;
-            }
-            if (//empty($amount) || 
+
+            if (empty($amount) || 
             empty($bank_name) || 
             empty($bank_address) || 
             empty($country) || 
             empty($account_name) || 
             empty($account_number) || 
             empty($transfer_details) || 
+            empty($transfer_type) || 
             empty($short_code)) 
             {
-              echo 1234;
             //user didn't send all that is required
                 http_response_code(401);
                 header("bad request: ensure all fiels are filled");
-             }else{
-              
+            }else{
             // user has successfully passed validation'
-                $email = $_SESSION['email'];
+                $user_id = $_SESSION['user_id'];
                 $amount = trim_input($amount);
                 $bank_name = trim_input($bank_name);
                 $bank_address = trim_input($bank_address);
@@ -65,18 +62,19 @@ session_start();
                 $account_name = trim_input($account_name); 
                 $account_number = trim_input($account_number);
                 $transfer_details = trim_input($transfer_details);
-                $transaction_id = generate_transaction_id($dbconnect);
-                
-                $sql = "INSERT INTO transactionhistory (email,transaction_id,bankname,bankaddress,country,accountname,accountnumber,shortcode,amount,details,transfertype) 
-                        VALUES ('$email','$transaction_id','$bank_name','$bank_address','$country','$account_name','$account_number','$short_code','$amount','$transfer_details','debit')";                $result = mysqli_query($dbconnect,$sql);
+                $transfer_type = trim_input($transfer_type); 
+                $short_code = trim_input($short_code);  
+
+                $sql = "INSERT INTO transactionhistory (userid,bankname,bankaddress,country,accountname,accountnumber,shortcode,amount,details,transfertype) 
+                        VALUES ('$user_id','$bank_name','$bank_address','$country','$account_name','$account_number','$short_code','$amount','$transfer_details','$transfer_type')";
+                $result = mysqli_query($dbconnect,$sql);
                 if ($result) {
-                                 
-                    $res = true;
+                    echo json_encode(['msg'=>'successfully posted']);
                     
                 }else{
                     echo json_encode(['msg'=>'server error']);
                 }        
-             }
+            }
             
     }else{
         echo 'not set';
@@ -825,12 +823,6 @@ session_start();
                 <h6 class="element-header">
                   Financial Overview
                 </h6>
-                <?php
-                $email = $_SESSION['email'];
-                $amount_sql = "SELECT * FROM users WHERE `email`= '$email'";
-                $query = mysqli_query($dbconnect,$amount_sql);
-                $row = mysqli_fetch_assoc($query);
-                ?>
                 <div class="element-box-tp">
                   <div class="row">
                     <div class="col-lg-7 col-xxl-6">
@@ -841,7 +833,7 @@ session_start();
                             Total Balance
                           </div>
                           <div class="balance-value">
-                            <span>£ <?php echo $row['account_balance']?></span><span class="trending trending-down-basic"></span>
+                            <span>£2,108,800</span><span class="trending trending-down-basic"><span>%12</span><i class="os-icon os-icon-arrow-2-down"></i></span>
                           </div>
                           <div class="balance-link">
                             <a class="btn btn-link btn-underlined" href="#"><span>View Statement</span><i class="os-icon os-icon-arrow-right4"></i></a>
@@ -852,7 +844,7 @@ session_start();
                             Credit Available
                           </div>
                           <div class="balance-value">
-                            £<?php echo $row['credit_balance']?>
+                            £1,922,350
                           </div>
                           <div class="balance-link">
                             <a class="btn btn-link btn-underlined" href="#"><span>Request Increase</span><i class="os-icon os-icon-arrow-right4"></i></a>
@@ -863,7 +855,7 @@ session_start();
                             Due Today
                           </div>
                           <div class="balance-value danger">
-                            £<?php echo $row['due_today']?>
+                            £18,645
                           </div>
                           <div class="balance-link">
                             <a class="btn btn-link btn-underlined btn-gold" href="#"><span>Pay Now</span><i class="os-icon os-icon-arrow-right4"></i></a>
@@ -890,259 +882,30 @@ session_start();
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-lg-7 col-xxl-6">
-                  <!--START - CHART-->
-                  <div class="element-wrapper">
-                    <div class="element-box">
-                      <div class="element-actions">
-                        <div class="form-group">
-                          <select class="form-control form-control-sm">
-                            <option selected="true">
-                              Last 90 days
-                            </option>
-                            <option>
-                              This Week
-                            </option>
-                            <option>
-                              This Month
-                            </option>
-                            <option>
-                              Today
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                      <h5 class="element-box-header">
-                        Balance History
-                      </h5>
-                      <div class="el-chart-w">
-                        <img height="190" width="300" src="./img/linechart.gif"/>
-                      </div>
-                    </div>
-                  </div>
-                  <!--END - CHART-->
-                </div>
-				
-                <div class="col-lg-5 col-xxl-6">
-                  <!--START - Money Withdraw Form-->
-                  <div class="element-wrapper">
-                    <div class="element-box">
-                    <?php if($res){ ?>
-                      <div class="alert alert-success text-white">
-                        Transaction has been posted successfully
-                      </div>
-                      <?php
-                    }?>
-                      <form id="transfer-form" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-                        <h5 class="element-box-header">
-                          International Transfer
-                        </h5>
-                        <div class="row">
-							<div class="col-sm-12">						
-                            <div class="form-group">
-                              <label class="lighter" for="">Enter Amount</label>
-                              <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                <input class="form-control" placeholder="Enter Amount..." type="text" value="0" id="amount" name="amount">
-                                <div class="input-group-append">
-                                  <div class="input-group-text">
-                                    GBP
-                                  </div>
-                                </div>
-                              </div>
-							  </div>
-                            </div>
-							<!--div class="form-group">
-                              <label class="lighter" for="">Bank Name</label>                              
-                                <input class="form-control" placeholder="Enter Amount..." type="text" value="0">
-                                <div class="input-group-append">                              
-                                </div>                    
-                            </div-->
-						  <!--div class="col-sm-12">
-						  <div class="form-group"-->
-						  <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Bank Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter Bank Name" required="required" type="text" id="bank_name" name="bank_name">                                
-                            </div>
-                          </div>
-                          <div class="col-sm-12">
-						  <div class="form-group">
-							  <label class="lighter" for="">Bank Address</label><textarea class="form-control" rows="2" placeholder="Enter Bank Address" required="required" id="bank_address" name="bank_address"></textarea>
-							</div>
-                          </div>
-                          <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Country</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter Bank Country" required="required" type="text" id="country" name="country">                                
-                            </div>
-                          </div>
-                          <input type="submit" id="hidden_submit" value="sub" hidden/>
-						  <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Account Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Account Name" required="required" type="text" id="account_name" name="account_name">                                
-                            </div>
-                          </div>
-						  <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Account Number</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter Account Number" required="required" type="text" id="account_number" name="account_number">                                
-                            </div>
-                          </div>
-                          <div class="col-sm-12">
-						  <div class="form-group">
-							  <label class="lighter" for="">Transfer Details</label><textarea class="form-control" rows="2" placeholder="Enter Transfer Details" required="required" id="transfer_details"  name="transfer_details" ></textarea>
-							</div>
-                          </div>
-                         <div class="col-sm-12">
-						  <div class="form-group">
-							  <label class="lighter" for="">Type</label><select class="form-control" required id="transfer_type" name="transfer_type">
-							      <option value="credit" disabled>select a type of transfer</option>
-							      <option value="credit">Credit</option>
-							      <option value="debit">Debit</option>
-							  </select>
-							</div>
-                          </div>
-						  <div class="col-sm-12">
-                            <div class="form-group">	
-                              <label class="lighter" for="">Sort Code/Routing Number</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter Sort Code/Routing Number" required="required" type="text" id="short_code" name="short_code">                                
-                            </div>
-                          </div>
-                        </div>
-                        <div class="form-buttons-w text-right compact">
-                          <!--button class="mr-2 mb-2 btn btn-primary" data-target="#onboardingFormModal" data-toggle="modal" type="button"><a class="btn btn-primary" href="#"><span>Transfer</span><i class="os-icon os-icon-grid-18"></i></a-->
-						  <!--a class="mr-2 mb-2 btn btn-primary" data-target="#onboardingFormModal" data-toggle="modal"><span>TF</span><i class="os-icon os-icon-grid-18"></i></a-->
-						  <!--button class="mr-2 mb-2 btn btn-primary" data-target="#onboardingFormModal" data-toggle="modal" type="button"><a class="btn btn-primary" href="#"><span>Transfer</span><i class="os-icon os-icon-grid-18"></i></a-->
-                        <!--Button trigger modal><button class="mr-2 mb-2 btn btn-primary" data-target="#onboardingWideSlideModal" data-toggle="modal" type="button">Multistep modal with slider</button-->
-						<!--div class="mb-4"-->
-						<button class="mr-2 mb-2 btn btn-primary" id="transfer-btn" data-target="#onboardingWideSlideModal" data-toggle="modal" type="button">Transfer<span></span><i class="os-icon os-icon-grid-18"></i></button>
-       <div aria-hidden="true" class="onboarding-modal modal fade animated" id="onboardingWideSlideModal" role="dialog" tabindex="-1">
-      <div class="modal-dialog modal-lg modal-centered" role="document">
-        <div class="modal-content text-center">
-          <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span class="close-label">Cancel Transfer</span><span class="os-icon os-icon-close"></span></button>
-          <div class="onboarding-slider-w">
-            <div class="onboarding-slide">
-              <div class="onboarding-side-by-side">
-                <div class="onboarding-media">
-                  <img alt="" src="img/bigicon2.png" width="200px">
-                </div>
-                <div class="onboarding-content with-gradient">
-                  <h4 class="onboarding-title">
-                    Two-Way Security Authentication
-                  </h4>
-                  <div class="onboarding-text">
-                    This is a Two-Way Security Authentication for the transaction you are about to perform. 
-                  </div>
-                </div>
-              </div>
-            </div>
-			<div class="onboarding-slide">
-              <div class="onboarding-side-by-side">
-                <div class="onboarding-media">
-                  <img alt="" src="img/bigicon6.png" width="200px">
-                </div>
-                <div class="onboarding-content with-gradient">
-                  <h4 class="onboarding-title">
-                    Transaction Requirements
-                  </h4>
-                  <div class="onboarding-text">
-                    The operation you are performing requires the provision of A Security Authentication Code for processing; consider the transaction requirements below and continue.
-                  </div>
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <ul class="features-list">
-                        <li>
-                          Two-Way Security Authentication Code
-                        </li>  
-                      </ul>
-                    </div>
-                    <div class="col-sm-6">
-                      <ul class="features-list">
-                        <li>
-                          Accept Terms &  Conditions
-                        </li>                       
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-			<div class="onboarding-slide">
-              <div class="onboarding-side-by-side">
-                <div class="onboarding-media">
-                  <img alt="" src="img/bigicon5.png" width="200px">
-                </div>
-                <div class="onboarding-content with-gradient">
-                  <h4 class="onboarding-title">
-                    Two-Way Security Authentication
-                  </h4>
-                  <div class="onboarding-text">
-                    Please enter Two-Way Security Authentication Code to continue. Request your pin from your Account Office Support Center.<br>
-NOTE: Do not share your Transaction Two-Way Authentication Security Code to avoid account compromise. Contact support@fortehousecapital.com 
-                  </div>
-                  <form id="otp-form">
-                    <div class="row">
-                      <div class="col-sm-12">
-                        <div class="form-group">
-                          <label for="">Enter Code here</label><input class="form-control" placeholder="Enter code..." type="text" id="otp">
-                        </div>
-                      </div>
-                      <div class="col-sm-12" id="result">
-                          
-                      </div>
-                    </div>
-                  </form>
-					<div class="modal-footer">
-					<button class="btn btn-secondary" data-dismiss="modal" type="button"> Cancel</button><button id="verify-otp-button" class="btn btn-primary" type="button"> Confirm Transfer</button>
-					</div>
-                </div>
-              </div>
-            </div>
-            
-            
-          </div>
-        </div>
-      </div>
-    </div>
-						</div>
-                      </form>
-                    </div>
-                  </div>
-                  <!--END - Money Withdraw Form-->
-				  
-                </div>
-              </div>
-              <!--START - Transactions Table-->
-              <div class="element-wrapper">
-                <h6 class="element-header">
-                  Recent Transactions
-                </h6>
-                <div class="element-box-tp">
-                  <div class="table-responsive">
                   <table class="table table-padded">
                       <thead>
                         <tr>
 						<th>
-                            Transaction ID
+                            First Name
                           </th>
                           <th>
-                            Transaction Status
+                          Last Name
                           </th>
                           <th>
-                            Date
+                            Email
                           </th>
                           <th>
-                            Transaction Details
+                            Nickname
                           </th>
-                          <th class="text-center">
-                            Type
-                          </th>
-                          <th class="text-right">
-                            Amount
+                          <th>
+                              Actions
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                       <?php 
                             $user = $_SESSION['user_id'];
-                            transac($dbconnect,$user);
+                            pending_otp($dbconnect,$user);
                           ?>
                       </tbody>
                     </table>
