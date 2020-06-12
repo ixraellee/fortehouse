@@ -19,7 +19,7 @@ session_start();
   $result= '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (!isset($_POST['update_btn'])) {
-       $id = $_SESSION['account_number'];
+       $id = $_GET['id'];
        $account_balance = $_POST['account_balance'];
        $credit_balance = $_POST['credit_balance'];
        $due_today = $_POST['due_today'];
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        }else{
            $sql = "UPDATE users SET `account_balance`='$account_balance',`credit_balance`='$credit_balance',`due_today`='$due_today' WHERE `account_number`= '$id'";
            if (mysqli_query($dbconnect,$sql)) {
-               $result = true;
+               echo 'working';
            }
        }
        
@@ -750,7 +750,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="content-w">
           <div class="content-i">
             <div class="content-box">
-             
+              <?php if(isset($_GET['id'])) { ?>
               <div class="row">				
                 <div class="col-lg-8 col-xxl-8">
                 <?php 
@@ -773,7 +773,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php }
                     ?>
                     <div class="element-box">
-
+                     
                       <form id="transfer-form" method="POST" action="<?php
                       $url = $_SERVER['PHP_SELF'].'?id='.$_GET['id'];
                       echo htmlspecialchars($url)?>">
@@ -835,6 +835,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <button type="button" id="activate_btn" name="activate_btn" class="mr-2 mb-2 py-2 btn btn-success"  type="submit">Activate User<span></span><i class="os-icon os-icon-grid-18"></i></button>
                         <button type="button" id="suspend_btn" name="suspend_btn" class="mr-2 mb-2 py-2 btn btn-danger"  type="submit">Suspend User<span></span><i class="os-icon os-icon-grid-18"></i></button>
                         </form>
+                          <?php } else{ ?>
+                            <div class="alert alert-warning">
+                              Unauthorized path
+                            </div>
+                          <?php
+                          } ?>
                         <div class="res" id="res"></div>
                         <!--div class="form-group">
                               <label class="lighter" for="">Bank Name</label>                              
