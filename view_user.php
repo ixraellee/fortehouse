@@ -747,33 +747,177 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!--------------------
         END - Main Menu
         -------------------->
-        <table class="table table-padded">
-                      <thead>
-                        <tr>
-						<th>
-                            Transaction ID
-                          </th>
-                          <th>
-                            User Email
-                          </th>
-                          <th>
-                            Amount
-                          </th>
-                          <th>
-                            Transaction Type
-                          </th>
-                          <th class="text-center">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php 
-                            $user = $_SESSION['user_id'];
-                            pending_transac($dbconnect,$user);
-                          ?>
-                      </tbody>
-                    </table>
+        <div class="content-w">
+          <div class="content-i">
+            <div class="content-box">
+             
+              <div class="row">				
+                <div class="col-lg-8 col-xxl-8">
+                <?php 
+                $profile_id = $_GET['id']; 
+                $profile_sql = "SELECT * FROM users WHERE `account_number` = '$profile_id'";
+                $details= mysqli_query($dbconnect,$profile_sql);
+                $row = '';
+                if ($details) {
+                    //echo mysqli_num_rows($details);
+                    $row = mysqli_fetch_assoc($details); 
+                }else{
+                    echo 'err';
+                }
+                ?>  
+
+                  <div class="element-wrapper">
+                    <?php
+                        if ($result) { ?>
+                           <div class="alert alert-success text-white">User has been uccessfully updated</div> 
+                        <?php }
+                    ?>
+                    <div class="element-box">
+
+                      <form id="transfer-form" method="POST" action="<?php
+                      $url = $_SERVER['PHP_SELF'].'?id='.$_GET['id'];
+                      echo htmlspecialchars($url)?>">
+                        <h5 class="element-box-header">
+                          Profile Settings
+                        </h5>
+                        <div class="row">
+                        
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">Nickname</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter last name" required type="text" name="lastname" value="<?php echo $row['nickname'] ?>" disabled>                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">Last Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter last name" required type="text" name="lastname" value="<?php echo $row['lastname'] ?>" disabled>                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">First Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="firstname" value="<?php echo $row['firstname'] ?>" disabled>                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">Email</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="" value="<?php echo $row['email'] ?>" disabled>                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">Account Balance</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="account_balance" value="<?php echo $row['account_balance'] ?>">                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">Credit Balance</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="credit_balance" value="<?php echo $row['credit_balance'] ?>">                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">								
+                              <label class="lighter" for="">Due Today</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="due_today" value="<?php echo $row['due_today'] ?>">                                
+                            </div>
+                        </div>
+                        
+                        <?php
+                            if($row['admin']){
+                                $type ='active';
+                            }else{
+                                $type= 'suspended';
+                            }
+                        ?>
+                        <div class="col-sm-12">
+                            <div class="form-group has-<?php echo $type ?>">								
+                              <label class="lighter" for="">Status</label><input  class="form-control form-control-<?php echo $type ?>" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" id="bank_name" name="" value="<?php echo $type?>" disabled>                                
+                            </div>
+                        </div>
+                        
+                        <button type="submit" name="activate_btn" class="mr-2 mb-2 py-2 btn btn-primary"  type="submit">Update User<span></span><i class="os-icon os-icon-grid-18"></i></button>
+                        <button type="button" id="activate_btn" name="activate_btn" class="mr-2 mb-2 py-2 btn btn-success"  type="submit">Activate User<span></span><i class="os-icon os-icon-grid-18"></i></button>
+                        <button type="button" id="suspend_btn" name="suspend_btn" class="mr-2 mb-2 py-2 btn btn-danger"  type="submit">Suspend User<span></span><i class="os-icon os-icon-grid-18"></i></button>
+                        </form>
+                        <div class="res" id="res"></div>
+                        <!--div class="form-group">
+                              <label class="lighter" for="">Bank Name</label>                              
+                                <input class="form-control" placeholder="Enter Amount..." type="text" value="0">
+                                <div class="input-group-append">                              
+                                </div>                    
+                            </div-->
+						  <!--div class="col-sm-12">
+						  <div class="form-group"-->
+						  
+              <!--START - Transactions Table-->
+              <!--END - Transactions Table--><!--------------------
+              START - Color Scheme Toggler
+              -------------------->
+              <div class="floated-colors-btn second-floated-btn">
+                <div class="os-toggler-w">
+                  <div class="os-toggler-i">
+                    <div class="os-toggler-pill"></div>
+                  </div>
+                </div>
+                <span>Dark </span><span>Colors</span>
+              </div>
+
+              <div class="floated-chat-btn">
+                <i class="os-icon os-icon-mail-07"></i><span>Chat Support</span>
+              </div>
+              <div class="floated-chat-w">
+                <div class="floated-chat-i">
+                  <div class="chat-close">
+                    <i class="os-icon os-icon-close"></i>
+                  </div>
+                  <div class="chat-head">
+                    <div class="user-w with-status status-green">
+                      <div class="user-avatar-w">
+                        <div class="user-avatar">
+                          <img alt="" src="img/avatar1.png">
+                        </div>
+                      </div>
+                      <div class="user-name">
+                        <h6 class="user-title">
+                          John Mayers
+                        </h6>
+                        <div class="user-role">
+                          Account Manager
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chat-messages">
+                    <div class="message">
+                      <div class="message-content">
+                        Hi, how can I help you?
+                      </div>
+                    </div>
+                    <div class="date-break">
+                      Mon 10:20am
+                    </div>
+                    <div class="message">
+                      <div class="message-content">
+                        Hi, my name is Mike, I will be happy to assist you
+                      </div>
+                    </div>
+                    <div class="message self">
+                      <div class="message-content">
+                        Hi, I am having challenges with a transfer I did some time ago, could you confirm the status for me plz?
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chat-controls">
+                    <input class="message-input" placeholder="Type your message here..." type="text">
+                    <div class="chat-extra">
+                      <a href="#"><span class="extra-tooltip">Attach Document</span><i class="os-icon os-icon-documents-07"></i></a><a href="#"><span class="extra-tooltip">Insert Photo</span><i class="os-icon os-icon-others-29"></i></a><a href="#"><span class="extra-tooltip">Upload Video</span><i class="os-icon os-icon-ui-51"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--------------------
+              END - Chat Popup Box
+              -------------------->
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="display-type"></div>
     </div>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>

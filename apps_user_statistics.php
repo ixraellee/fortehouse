@@ -792,7 +792,7 @@ session_start();
                                         <td> <?php echo $row['lastname']; ?> </td>
                                         <td> <?php echo $row['email']; ?> </td>
                                         <td> <?php echo $row['active'] ; ?> </td>
-                                        <td> <a class="btn btn-success text-white" target="_blank" href="view.php?id=<?php echo $row['account_number']; ?>"> View </a> </td>
+                                        <td> <a class="btn btn-success text-white" target="_blank" href="view_user.php?id=<?php echo $row['account_number']; ?>"> View </a> </td>
                                     </tr>
                                <?php  }
                             }
