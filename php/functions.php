@@ -145,6 +145,22 @@ function generate_transaction_id($db)
     }
 }
 
+function  generate_otp($db)
+{
+    $id = rand(10000,99999);
+    $id_sql = "SELECT * FROM users WHERE `otp`='$id'";
+    $check = mysqli_query($db,$id_sql);
+    if($check){
+        if(mysqli_num_rows($check) > 0){
+            generate_otp();
+        }else{
+            return $id;
+        }
+    }else{
+      echo 'not working';
+    }
+}
+
 function populateTable($db,$id)
 {
   $db_sql = "SELECT * FROM transactionhistory WHERE `transaction_id`= '$id'";

@@ -10,6 +10,11 @@ session_start();
     header("Location: index.html");
 
   }
+  if (!$_SESSION['is_admin']) {
+    session_unset();
+    session_destroy();
+    header("Location: index.html");
+  }
   function trim_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -18,20 +23,18 @@ session_start();
   }
   $result= '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-   if (!isset($_POST['update_btn'])) {
+   if (!isset($_POST['generate_otp_btn']) and isset($_GET['id'])) {
        $id = $_GET['id'];
-       $account_balance = $_POST['account_balance'];
-       $credit_balance = $_POST['credit_balance'];
-       $due_today = $_POST['due_today'];
-
-       if (!isset($account_balance) or !isset($credit_balance) or !isset($due_today)) {
-           echo 'not set';
+      $otp = generate_otp($dbconnect);
+      $sql = "UPDATE users SET `otp`='$otp' WHERE `account_number`= '$id'";
+       $res = mysqli_query($dbconnect,$sql);
+       if ($res) {
+           send_otp_mail($otp);
        }else{
-           $sql = "UPDATE users SET `account_balance`='$account_balance',`credit_balance`='$credit_balance',`due_today`='$due_today' WHERE `account_number`= '$id'";
-           if (mysqli_query($dbconnect,$sql)) {
-           }
+           die('error updatting database please try again later');
        }
-       
+   }else{
+       echo 1234;
    }
 
 }
@@ -760,6 +763,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($details) {
                     //echo mysqli_num_rows($details);
                     $row = mysqli_fetch_assoc($details); 
+                    
                 }else{
                     echo 'err';
                 }
@@ -776,63 +780,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <form id="transfer-form" method="POST" action="<?php
                       $url = $_SERVER['PHP_SELF'].'?id='.$_GET['id'];
                       echo htmlspecialchars($url)?>">
-                        <h5 class="element-box-header">
-                          Profile Settings
-                        </h5>
-                        <div class="row">
-                        
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Nickname</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter last name" required type="text" name="lastname" value="<?php echo $row['nickname'] ?>" disabled>                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Last Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter last name" required type="text" name="lastname" value="<?php echo $row['lastname'] ?>" disabled>                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">First Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="firstname" value="<?php echo $row['firstname'] ?>" disabled>                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Email</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="" value="<?php echo $row['email'] ?>" disabled>                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Account Balance</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="account_balance" value="<?php echo $row['account_balance'] ?>">                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Credit Balance</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="credit_balance" value="<?php echo $row['credit_balance'] ?>">                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">								
-                              <label class="lighter" for="">Due Today</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" name="due_today" value="<?php echo $row['due_today'] ?>">                                
-                            </div>
-                        </div>
-                        
-                        <?php
-                            if($row['admin']){
-                                $type ='active';
-                            }else{
-                                $type= 'suspended';
-                            }
-                        ?>
-                        <div class="col-sm-12">
-                            <div class="form-group has-<?php echo $type ?>">								
-                              <label class="lighter" for="">Status</label><input  class="form-control form-control-<?php echo $type ?>" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" id="status" name="" value="<?php echo $type?>" disabled>                                
-                            </div>
-                        </div>
-                        
-                        <button type="submit" name="activate_btn" class="mr-2 mb-2 py-2 btn btn-primary"  type="submit">Update User<span></span><i class="os-icon os-icon-grid-18"></i></button>
-                        <button type="button" id="activate_btn" name="activate_btn" class="mr-2 mb-2 py-2 btn btn-success"  type="submit">Activate User<span></span><i class="os-icon os-icon-grid-18"></i></button>
-                        <button type="button" id="suspend_btn" name="suspend_btn" class="mr-2 mb-2 py-2 btn btn-danger"  type="submit">Suspend User<span></span><i class="os-icon os-icon-grid-18"></i></button>
+                      <p>
+                          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias nulla illum ipsa labore error voluptatem exercitationem quisquam commodi vel voluptate atque nemo blanditiis et, earum impedit voluptatibus dolore deserunt dolorem.
+                      </p>
+                      <p>
+                          Generate / Regenerate otp for User<?php echo $row['account_number'] ?>
+                      </p>
+                      <button type="submit" id="generate_otp_btn" name="suspend_btn" class="mr-2 mb-2 py-2 btn btn-primary btn-lg"  type="submit">Generate Otp<span></span><i class="os-icon os-icon-grid-18"></i></button>
                         </form>
                           <?php } else{ ?>
                             <div class="alert alert-warning">
