@@ -29,7 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        }else{
            $sql = "UPDATE users SET `account_balance`='$account_balance',`credit_balance`='$credit_balance',`due_today`='$due_today' WHERE `account_number`= '$id'";
            if (mysqli_query($dbconnect,$sql)) {
-               echo 'working';
            }
        }
        
@@ -827,7 +826,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         ?>
                         <div class="col-sm-12">
                             <div class="form-group has-<?php echo $type ?>">								
-                              <label class="lighter" for="">Status</label><input  class="form-control form-control-<?php echo $type ?>" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" id="bank_name" name="" value="<?php echo $type?>" disabled>                                
+                              <label class="lighter" for="">Status</label><input  class="form-control form-control-<?php echo $type ?>" data-error="Enter Correct Account Info" placeholder="Enter first name" required type="text" id="status" name="" value="<?php echo $type?>" disabled>                                
                             </div>
                         </div>
                         

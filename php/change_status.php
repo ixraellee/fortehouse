@@ -8,7 +8,7 @@ $data = json_decode($json);
 
 require('db_connect.php');
 session_start();
-$userid =  $_SESSION['account_number'];
+$userid =  $data->id;
 $action = $data->action;
 
 function trim_input($data) {
@@ -23,15 +23,17 @@ function trim_input($data) {
 if ($action !== ''){
     if($action){
         $newStatus = 1;
+        $verbal_status = 'active';
     }else{
         $newStatus = 0;
+        $verbal_status = 'suspended';
     }
     $sql = "UPDATE users SET `admin`='$newStatus' WHERE `account_number`='$userid'";
     if(mysqli_query($dbconnect,$sql)){
         $sql = "SELECT * FROM users WHERE `account_number`='$userid'";
         if(mysqli_query($dbconnect,$sql)){
             $newStatus = mysqli_fetch_assoc(mysqli_query($dbconnect,$sql));
-            echo json_encode(['message'=>'success','status'=>$newStatus['admin']]);
+            echo json_encode(['message'=>'success','verbal_status'=>$verbal_status,'status'=>$newStatus['admin']]);
         }
     }else{
         http_response_code(400);

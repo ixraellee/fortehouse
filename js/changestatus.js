@@ -13,10 +13,16 @@
          })
 
          function changeStatus(action){
-             var output = document.getElementById('status');
-             res.textContent = 'Processing';
+             var res = document.getElementById('status');
+             res.value = 'Processing...';
+             const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+           
+            if (!id) {
+                alert('invalid details');
+            }
              var data = {
-                 action: action
+                 action,id
              }
             fetch('http://localhost/forte-master/php/change_status.php', {
             method: 'post',
@@ -28,7 +34,8 @@
             .then(data => {
                 console.log(data);
                 if(data.message == 'success'){
-                    //window.location.reload(true);
+                    res.value = data['verbal_status'];
+                    // document.getElementById('form').submit();
                 }
             })
             .catch(res => console.log(res))
