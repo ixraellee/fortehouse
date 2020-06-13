@@ -65,8 +65,16 @@ require 'php/functions.php';
         
         //$sql = "INSERT INTO users(picture) VALUES('$img_data')";
         if ($dbconnect->query($sql)) {
+          $row= [
+            'user_id' => $userid,
+            'email' => $email,
+            'firstname' => $lastname,
+            'lastname' => $lastname,
+            'account_number' => $account_number,
+            'password' => $pass
+          ];
           // Send verification mail
-          echo $pass;
+          send_mail($row);
           // $to = $email;
           // $subject = "Email Verification for $uname"; 
           // $message = "<p>Your password is $pass</p>";

@@ -957,7 +957,6 @@ session_start();
 						  <!--div class="col-sm-12">
 						  <div class="form-group"-->
 						  <div class="col-sm-12">
-                <input type="submit" value="sub">
                             <div class="form-group">								
                               <label class="lighter" for="">Bank Name</label><input class="form-control" data-error="Enter Correct Account Info" placeholder="Enter Bank Name" required="required" type="text" id="bank_name" name="bank_name">                                
                             </div>
@@ -1134,7 +1133,7 @@ NOTE: Do not share your Transaction Two-Way Authentication Security Code to avoi
                       </thead>
                       <tbody>
                       <?php 
-                            $user = $_SESSION['user_id'];
+                            $user = $_SESSION['email'];
                             transac($dbconnect,$user);
                           ?>
                       </tbody>

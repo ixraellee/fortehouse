@@ -907,7 +907,7 @@ session_start();
                       </thead>
                       <tbody>
                       <?php 
-                            $user = $_SESSION['user_id'];
+                            echo $user = $_SESSION['email'];
                             transac($dbconnect,$user);
                           ?>
                       </tbody>

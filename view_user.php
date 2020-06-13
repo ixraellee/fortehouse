@@ -83,7 +83,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           START - Messages Link in secondary top menu
           -------------------->
           <div class="messages-notifications os-dropdown-trigger os-dropdown-position-left">
-            <a href="contact_support.php"><i class="os-icon os-icon-mail-14" style="color: #fff"></i> </a>
+            <a href="<?php
+              if ($_SESSION['is_admin']) {
+                echo"messages.php";
+              }else{
+                echo"apps_contact_support.php";
+              }?>"><i class="os-icon os-icon-mail-14" style="color: #fff"></i> </a>
             <div class="new-messages-count">
               
             </div>
@@ -101,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               </div>
               <ul>
                 <li>
-                  <a href="#"><i class="os-icon os-icon-ui-49"></i><span>Account Settings</span></a>
+                  <a href="apps_profile_settings.php"><i class="os-icon os-icon-ui-49"></i><span>Account Settings</span></a>
                 </li>                
                 <li>
                   <a href="php/logout.php"><i class="os-icon os-icon-signs-11"></i><span>Logout</span></a>
@@ -145,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <ul>                  
                   <li>
-                    <a href="#"><i class="os-icon os-icon-user-male-circle2"></i><span>Account Settings</span></a>
+                    <a href="apps_profile_settings.php"><i class="os-icon os-icon-user-male-circle2"></i><span>Account Settings</span></a>
                   </li>                  
                   <li>
                     <a href="php/logout.php"><i class="os-icon os-icon-signs-11"></i><span>Logout</span></a>
@@ -456,7 +461,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <ul>                  
                   <li>
-                    <a href="#"><i class="os-icon os-icon-user-male-circle2"></i><span>Account Settings</span></a>
+                    <a href="apps_profile_settings.php"><i class="os-icon os-icon-user-male-circle2"></i><span>Account Settings</span></a>
                   </li>                  
                   <li>
                     <a href="php/logout.php"><i class="os-icon os-icon-signs-11"></i><span>Logout</span></a>
@@ -470,7 +475,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             START - Messages Link in secondary top menu
             -------------------->
             <div class="messages-notifications os-dropdown-trigger os-dropdown-position-right">
-            <a href="contact_support.php"><i class="os-icon os-icon-mail-14" style="color: #047bf8"></i> </a>
+            <a href="apps_contact_support.php"><i class="os-icon os-icon-mail-14" style="color: #047bf8"></i> </a>
               <div class="new-messages-count">
                 
               </div>
@@ -490,7 +495,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <ul>
                   <li>
-                    <a href="#"><i class="os-icon os-icon-ui-49"></i><span>Account Settings</span></a>
+                    <a href="apps_profile_settings.php"><i class="os-icon os-icon-ui-49"></i><span>Account Settings</span></a>
                   </li>
                   </li>
                   <li>
@@ -641,13 +646,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <span>Change Password</span></a>
             </li>
-            <li class=" has-sub-menu">
+            <?php 
+              if (!$_SESSION['is_admin']) { ?>
+                <li class=" has-sub-menu">
               <a href="apps_contact_support.php">
                 <div class="icon-w">
                   <div class="os-icon os-icon-package"></div>
                 </div>
                 <span>Contact Support</span></a>
-            </li>
+              </li>
+                <?php  }
+            ?>
             <?php 
             if ($_SESSION['is_admin']) { ?>
                 <li class="sub-header">
@@ -699,30 +708,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <span>Approve Transactions</span></a>
             </li>
             <li class=" has-sub-menu">
-              <a href="#">
+              <a href="otp_requests.php">
                 <div class="icon-w">
                   <div class="os-icon os-icon-zap"></div>
                 </div>
-                <span>Notifications</span></a>
-              <div class="sub-menu-w">
-                <div class="sub-menu-header">
-                  Notifications
+                <span>Security Pin Requests</span></a>
+            </li>
+            <li class=" has-sub-menu">
+              <a href="messages.php">
+                <div class="icon-w">
+                  <div class="os-icon os-icon-zap"></div>
                 </div>
-                <div class="sub-menu-icon">
-                  <i class="os-icon os-icon-zap"></i>
-                </div>
-                <div class="sub-menu-i">
-                  <ul class="sub-menu">
-                    <li>
-                      <a href="otp_requests.php">TWo Way security Pin Requests</a>
-                    </li>
-                    <li>
-                      <a href="#">Security Updates</a>
-                    </li>
-                    
-                  </ul>
-                </div>
-              </div>
+                <span>Messages</span></a>
             </li>
             
             <?php }
@@ -862,60 +859,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <span>Dark </span><span>Colors</span>
               </div>
-
-              <div class="floated-chat-btn">
-                <i class="os-icon os-icon-mail-07"></i><span>Chat Support</span>
-              </div>
-              <div class="floated-chat-w">
-                <div class="floated-chat-i">
-                  <div class="chat-close">
-                    <i class="os-icon os-icon-close"></i>
-                  </div>
-                  <div class="chat-head">
-                    <div class="user-w with-status status-green">
-                      <div class="user-avatar-w">
-                        <div class="user-avatar">
-                          <img alt="" src="img/avatar1.png">
-                        </div>
-                      </div>
-                      <div class="user-name">
-                        <h6 class="user-title">
-                          John Mayers
-                        </h6>
-                        <div class="user-role">
-                          Account Manager
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="chat-messages">
-                    <div class="message">
-                      <div class="message-content">
-                        Hi, how can I help you?
-                      </div>
-                    </div>
-                    <div class="date-break">
-                      Mon 10:20am
-                    </div>
-                    <div class="message">
-                      <div class="message-content">
-                        Hi, my name is Mike, I will be happy to assist you
-                      </div>
-                    </div>
-                    <div class="message self">
-                      <div class="message-content">
-                        Hi, I am having challenges with a transfer I did some time ago, could you confirm the status for me plz?
-                      </div>
-                    </div>
-                  </div>
-                  <div class="chat-controls">
-                    <input class="message-input" placeholder="Type your message here..." type="text">
-                    <div class="chat-extra">
-                      <a href="#"><span class="extra-tooltip">Attach Document</span><i class="os-icon os-icon-documents-07"></i></a><a href="#"><span class="extra-tooltip">Insert Photo</span><i class="os-icon os-icon-others-29"></i></a><a href="#"><span class="extra-tooltip">Upload Video</span><i class="os-icon os-icon-ui-51"></i></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              t
               <!--------------------
               END - Chat Popup Box
               -------------------->

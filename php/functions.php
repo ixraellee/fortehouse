@@ -1,8 +1,8 @@
 <?php
 
-function transac($db)
+function transac($db,$user)
 {
-  $query1 = "SELECT * from `transactionhistory` ORDER BY `id` DESC";
+  $query1 = "SELECT * from `transactionhistory` WHERE `email`='$user' ORDER BY `id` DESC";
   $fetch1 = mysqli_query($db, $query1);
   $row = mysqli_num_rows($fetch1);
 

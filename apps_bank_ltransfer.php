@@ -1135,7 +1135,7 @@ NOTE: Do not share your Transaction Two-Way Authentication Security Code to avoi
                       </thead>
                       <tbody>
                       <?php 
-                            $user = $_SESSION['user_id'];
+                            $user = $_SESSION['email'];
                             transac($dbconnect,$user);
                           ?>
                       </tbody>
