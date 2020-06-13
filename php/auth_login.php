@@ -2,7 +2,7 @@
 $userid = mysqli_real_escape_string($dbconnect, $_POST["userid"]);
 $result = $dbconnect->query("SELECT * FROM users where `nickname` = '$userid'");
 
-    if($result -> num_rows == 0){
+    if($result->num_rows == 0){
         //check if user exist
         $echo = "User is missing from record";
     }

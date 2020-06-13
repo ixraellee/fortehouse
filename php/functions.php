@@ -80,7 +80,7 @@ $fetch1 = mysqli_query($db,$query1);
 }
 
 function pending_otp($db){
-  $query1 = "SELECT * from `users` WHERE `request_otp` = '1' ORDER BY `id` DESC";
+  $query1 = "SELECT * from `users` WHERE `request_otp` = '1'";
 $fetch1 = mysqli_query($db,$query1);
   $row = mysqli_num_rows($fetch1);
   
@@ -123,8 +123,8 @@ function showimg($uid,$db){
 
 
                         if($user){
-                            $mimage = $user['picture']; ?>
-                             <img src="data:image/jpg;charset=utf8;base64,<?php echo base64_encode($mimage); ?>" />
+                            $mimage = $user['picture_name']; ?>
+                             <img style="width:50px; height:50px" src="uploads/<?php echo$mimage?>" />
                        <?php }    
 
 }

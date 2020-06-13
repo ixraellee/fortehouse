@@ -26,10 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    if (!isset($_POST['generate_otp_btn']) and isset($_GET['id'])) {
        $id = $_GET['id'];
       $otp = generate_otp($dbconnect);
-      $sql = "UPDATE users SET `otp`='$otp' WHERE `account_number`= '$id'";
+      $sql = "UPDATE users SET `otp`='$otp',`request_otp` = '0' WHERE `account_number`= '$id'";
        $res = mysqli_query($dbconnect,$sql);
        if ($res) {
-           send_otp_mail($otp);
+           $result = true;
+           //send_otp_mail($otp);
        }else{
            die('error updatting database please try again later');
        }

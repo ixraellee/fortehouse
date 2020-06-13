@@ -1,7 +1,7 @@
 <?php
 require('./php/db_connect.php');
 session_start();
-
+require 'php/functions.php';
   $error = null;
   if($_SERVER['REQUEST_METHOD'] === 'POST'){
     if (!empty($_POST['userid']) and !empty($_POST['email']) and !empty($_FILES["picture"]["name"]) and !empty($_POST['firstname']) and !empty($_POST['lastname'])) {
@@ -9,27 +9,29 @@ session_start();
       $email = test_input($_POST['email']);
       $firstname = test_input($_POST['firstname']);
       $lastname = test_input($_POST['lastname']);
+
       $picture = $_FILES["picture"]["name"];
       $imgContent = '';
-
-      //working with images
+      $targetDir =  "uploads/";
       $fileName = basename($picture); 
+      $targetFilePath = $targetDir.$fileName;
       $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
 
       $allowTypes = array('jpg','png','jpeg','gif'); 
        //validate image type
       if(in_array($fileType, $allowTypes)){ 
           $image = $_FILES['picture']['tmp_name']; 
-          $imgContent = addslashes(file_get_contents($image));
+          //$img_data = file_get_contents($image);
       }else{ 
         $error = 'Sorry, only JPG, JPEG, PNG, & GIF files are allowed to upload.';
         exit('Sorry, only JPG, JPEG, PNG, & GIF files are allowed to upload.'); 
       }
 
+      
       $verify_email_sql = "SELECT * FROM users WHERE `email`='$email'";
       $userExists = mysqli_query($dbconnect,$verify_email_sql);
       
-      if (mysqli_num_rows($userExists) !== 0 ) {
+      if (mysqli_num_rows($userExists)  !== 0 ) {
         echo "Email $email already exists";
       }else{
         
@@ -37,22 +39,47 @@ session_start();
         $hashpass = password_hash($pass, PASSWORD_DEFAULT);
         $account_number = generate_account_number($dbconnect);
 
-        $sql = "INSERT INTO users (nickname,email,firstname,lastname,account_number,picture,hashed_password) VALUES( '$userid','$email','$firstname','$lastname','$account_number','$imgContent','$hashpass')";
-
+        //move uploaded file
+        if(move_uploaded_file($image,$targetFilePath)){
+          echo $targetFilePath;
+        }else{
+          die('error uploading file');
+        };
+        $sql = "INSERT INTO 
+        users(
+          nickname,
+          email,
+          firstname,
+          lastname,
+          account_number,
+          picture_name,
+          hashed_password) 
+        VALUES( 
+        '$userid',
+        '$email',
+        '$firstname',
+        '$lastname',
+        '$account_number',
+        '$fileName',
+        '$hashpass')";  
+        
+        //$sql = "INSERT INTO users(picture) VALUES('$img_data')";
         if ($dbconnect->query($sql)) {
           // Send verification mail
-          $to = $email;
-          $subject = "Email Verification for $uname"; 
-          $message = "<p>Your password is $pass</p>";
-          $headers = "From:arnoldekechi1998@gmail.com\r\n";
-          $headers .= "MIME-Version: 1.0" . "\r\n";
-          $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+          echo $pass;
+          // $to = $email;
+          // $subject = "Email Verification for $uname"; 
+          // $message = "<p>Your password is $pass</p>";
+          // $headers = "From:arnoldekechi1998@gmail.com\r\n";
+          // $headers .= "MIME-Version: 1.0" . "\r\n";
+          // $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 
-          mail($to,$subject,$message,$headers);
+          // mail($to,$subject,$message,$headers);
             
-          header('location:emails_activate.php');
+          // header('location:emails_activate.php');
+          // echo 'passed';
         }else{
-          echo 'error posting to db';
+          echo mysqli_error($dbconnect);
         }
       }
     }else{
@@ -144,7 +171,7 @@ session_start();
           </div>
           <div class="buttons-w">
             <button class="btn btn-primary" name="register" type="submit">Register Now</button> 
-          <p> Member?  <a href="auth_login.php"> Log in </a></p>
+          <p> Member?  <a href="auth_admin_login.php"> Log in </a></p>
       
           <p id="err-class"><?php echo $error?></p>
           </div>
